@@ -1,6 +1,6 @@
 # Third-party components and their notices
 
-Swim Controls as a whole is GPL-3.0-or-later (`LICENSE`, `NOTICE.md`). These components are included under their own
+Separate Swimming Controls as a whole is GPL-3.0-or-later (`LICENSE`, `NOTICE.md`). These components are included under their own
 GPL-compatible licences; their notices are reproduced as those licences require.
 
 ## CommonLibSSE-NG 7.2.0 - Skyrim 1.7.x build line

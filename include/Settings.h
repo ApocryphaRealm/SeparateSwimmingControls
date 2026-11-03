@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-// The mod's settings: read from SKSE\Plugins\SwimControls.ini, written back line by line (never with
+// The mod's settings: read from SKSE\Plugins\SeparateSwimmingControls.ini, written back line by line (never with
 // WritePrivateProfileString, which reports success and writes nothing under MO2's virtual folder). The page and the input
 // run on other threads than the movement hook, so every value is atomic. Compiled defaults match the shipped INI (rule 16).
 namespace settings

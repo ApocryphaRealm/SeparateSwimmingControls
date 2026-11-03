@@ -1,4 +1,4 @@
-Swim Controls
+Separate Swimming Controls
 Version 1.0.0
 
 Skyrim has no button for rising or sinking in water. This mod adds two, and a dive.
@@ -19,11 +19,12 @@ Behavior Data Injector with Universal Plugin, or Nemesis or Pandora) gives the l
 it the dive works and plays the game's own fall.
 
 SETTINGS
-Swim Controls in the Apocrypha Menu Framework: every key, both speeds, the dive. All of it is also in
-SKSE\Plugins\SwimControls.ini, so the mod works the same without a menu framework.
+Separate Swimming Controls in the Apocrypha Menu Framework: every key, both speeds, the dive. All of it is also in
+SKSE\Plugins\SeparateSwimmingControls.ini, so the mod works the same without a menu framework.
 
 WORKS BESIDE
-Look-pitch swimming, and Underwater NG and sprint swimming mods: the movement is added to theirs. It does not edit the
+Look-pitch swimming, and Underwater NG and sprint swimming mods: the movement is added to theirs. With Underwater NG, gear
+that pulls you under keeps doing so: hold Ascend against it, or change its Base buoyancy or Armor affects swimming settings. It does not edit the
 control map, so it does not fight a mod that does.
 
 REQUIREMENTS

@@ -11,11 +11,11 @@
 #include <mutex>
 #include <unordered_map>
 
-namespace swimcontrols::Strings
+namespace ssc::Strings
 {
     namespace
     {
-        constexpr std::string_view kStem = "SwimControls";
+        constexpr std::string_view kStem = "SeparateSwimmingControls";
 
         std::mutex lock;
         std::string language = "english";

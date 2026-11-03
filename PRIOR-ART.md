@@ -1,4 +1,4 @@
-# Prior art for Swim Controls (searched 2026-11-03, rule 24)
+# Prior art for Separate Swimming Controls (searched 2026-11-03, rule 24)
 
 Searched Nexus (skyrimspecialedition, GraphQL name search: swim, swimming, dive, diving, underwater, ascend, descend, vertical,
 swim up, swim control, buoyancy, water control, surface) and GitHub (repositories: skyrim swim, skyrim swimming, skse swim,

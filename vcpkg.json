@@ -1,8 +1,8 @@
 {
-    "name": "swimcontrols",
+    "name": "separateswimmingcontrols",
     "version-string": "1.0.0",
-    "description": "Swim Controls - hold to rise and sink in water, and a dive key, on your own buttons.",
-    "homepage": "https://github.com/ApocryphaRealm/SwimControls",
+    "description": "Separate Swimming Controls - hold to rise and sink in water, and a dive key, on your own buttons.",
+    "homepage": "https://github.com/ApocryphaRealm/SeparateSwimmingControls",
     "license": "GPL-3.0-or-later",
     "dependencies": [
         "commonlibsse-ng",

@@ -266,7 +266,7 @@ namespace page
 			return;
 		}
 		if (!HasRequiredExports()) { return; }
-		SKSEMenuFramework::SetSection("Swim Controls");
+		SKSEMenuFramework::SetSection("Separate Swimming Controls");
 		SKSEMenuFramework::AddSectionItem("Settings", Render);
 		if (GetMenuFrameworkFunction<void*>("RegisterInpoutEvent")) { SKSEMenuFramework::AddInputEvent(OnInput); }
 		else { logger::warn("the menu framework has no input hook; the Bind buttons will wait for nothing (the INI still sets the keys)"); }

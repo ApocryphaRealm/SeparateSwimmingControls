@@ -11,7 +11,7 @@
 #include <string>
 #include <string_view>
 
-// DevBench tool "swimcontrols.control" (rules 31 and 64). A real test still presses the real button; hold and dive prove the
+// DevBench tool "ssc.control" (rules 31 and 64). A real test still presses the real button; hold and dive prove the
 // movement path and the leap, not the input path.
 namespace DevBenchTool
 {
@@ -96,7 +96,7 @@ namespace DevBenchTool
 				settings::Save();
 			}
 			else if (op == "reload") { settings::Load(); }
-			const std::string out = std::format(R"({{"ok":{},"op":"{}","ini":"{}",{}}})", extra, op.empty() ? "state" : op, "SwimControls.ini", swim::StateJson());
+			const std::string out = std::format(R"({{"ok":{},"op":"{}","ini":"{}",{}}})", extra, op.empty() ? "state" : op, "SeparateSwimmingControls.ini", swim::StateJson());
 			a_write(a_sink, out.c_str());
 		}
 	}
@@ -108,19 +108,19 @@ namespace DevBenchTool
 		DevBenchAPI::IDevBenchInterface001* devBench = DevBenchAPI::GetDevBenchInterface001();
 		if (!devBench)
 		{
-			if (a_lastAttempt) { logger::info("DevBench not detected; skipping the \"swimcontrols.control\" tool"); }
+			if (a_lastAttempt) { logger::info("DevBench not detected; skipping the \"ssc.control\" tool"); }
 			return;
 		}
 		constexpr const char* descriptor =
 			"{"
-			"\"description\":\"Swim Controls live state and driver. op=state (default): settings, swimming state, keys and whether each is held, counters, dive state and what Simple Diving System has answered. "
+			"\"description\":\"Separate Swimming Controls live state and driver. op=state (default): settings, swimming state, keys and whether each is held, counters, dive state and what Simple Diving System has answered. "
 			"op=hold row=Ascend|Descend ms=N: as if the row's key were held. op=dive: what the Dive key queues. op=set name=<INI key> value=<v>: sets and saves. op=restore: defaults, saved. op=reload: re-reads the INI.\","
 			"\"inputSchema\":{\"type\":\"object\",\"properties\":{\"op\":{\"type\":\"string\"},\"row\":{\"type\":\"string\"},\"ms\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}},"
 			"\"readOnly\":false"
 			"}";
-		if (devBench->RegisterTool("swimcontrols.control", descriptor, &ControlTool, nullptr))
+		if (devBench->RegisterTool("ssc.control", descriptor, &ControlTool, nullptr))
 		{
-			logger::info("registered \"swimcontrols.control\" with DevBench (build {})", devBench->GetBuildNumber());
+			logger::info("registered \"ssc.control\" with DevBench (build {})", devBench->GetBuildNumber());
 			registered = true;
 		}
 	}

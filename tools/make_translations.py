@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes dist/Interface/Translations/SwimControls_<language>.txt (UTF-16LE with BOM) from the table below, so the
+"""Writes dist/Interface/Translations/SeparateSwimmingControls_<language>.txt (UTF-16LE with BOM) from the table below, so the
 eleven files cannot drift apart. Run it after adding a string: py -3 tools/make_translations.py"""
 import pathlib
 
@@ -56,5 +56,5 @@ for i, lang in enumerate(LANGS):
     for key, row in T.items():
         assert len(row) == 11, key
         lines.append(f"${key}\t{row[i]}")
-    (root / f"SwimControls_{lang}.txt").write_bytes(b"\xff\xfe" + ("\r\n".join(lines) + "\r\n").encode("utf-16-le"))
+    (root / f"SeparateSwimmingControls_{lang}.txt").write_bytes(b"\xff\xfe" + ("\r\n".join(lines) + "\r\n").encode("utf-16-le"))
 print("wrote", len(LANGS), "files,", len(T), "keys")

@@ -1,4 +1,4 @@
-// Swim Controls (working name) - own code, GPL-3.0-or-later. Hold-to-rise and hold-to-sink in water, Sneak that does not sneak
+// Separate Swimming Controls - own code, GPL-3.0-or-later. Hold-to-rise and hold-to-sink in water, Sneak that does not sneak
 // in water, and a dive key that calls on Simple Diving System's animation when that mod is installed. See include/Swim.h.
 #include "PCH.h"
 
@@ -28,7 +28,7 @@ namespace
 			swim::RegisterInputSink();
 			break;
 		case SKSE::MessagingInterface::kDataLoaded:
-			swimcontrols::Strings::Load();
+			ssc::Strings::Load();
 			DevBenchTool::Init(true);
 			break;
 		case SKSE::MessagingInterface::kPostLoadGame:
@@ -43,16 +43,16 @@ namespace
 
 SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
 {
-	SKSE::log::init("SwimControls");
+	SKSE::log::init("SeparateSwimmingControls");
 	// Address Library pre-check, BEFORE SKSE::Init, which opens the Address Library itself: a missing file gets a message
 	// naming it and the plugin loads inert instead of CommonLibSSE-NG's bare failure line.
-	if (!AddressLibraryGuard::Guard("Swim Controls")) { return true; }
+	if (!AddressLibraryGuard::Guard("Separate Swimming Controls")) { return true; }
 	SKSE::Init(a_skse);
 
 	settings::Load();
 	settings::ApplyLogLevel();
-	SKSE::log::describe_level("SwimControls.ini");
-	logger::info("Swim Controls {} loading", SKSE::PluginDeclaration::GetSingleton()->GetVersion().string("."));
+	SKSE::log::describe_level("SeparateSwimmingControls.ini");
+	logger::info("Separate Swimming Controls {} loading", SKSE::PluginDeclaration::GetSingleton()->GetVersion().string("."));
 
 	swim::InstallHandlerWraps();
 

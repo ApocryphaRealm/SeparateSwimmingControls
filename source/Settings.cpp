@@ -226,7 +226,7 @@ namespace settings
 
 	void Load()
 	{
-		g_iniPath = (std::filesystem::current_path() / "Data" / "SKSE" / "Plugins" / "SwimControls.ini").string();
+		g_iniPath = (std::filesystem::current_path() / "Data" / "SKSE" / "Plugins" / "SeparateSwimmingControls.ini").string();
 		RestoreDefaults();
 		if (!std::filesystem::exists(g_iniPath))
 		{
