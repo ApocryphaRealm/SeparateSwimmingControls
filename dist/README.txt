@@ -11,7 +11,7 @@ the water: at the surface it does the game's own jump, and deeper down it does n
 While you are in water, a button these rows hold does nothing else; on land it goes back to what it was.
 
 DIVE
-Press Dive (D-pad left, or Y on the keyboard) with deep water just ahead of you and you leap into it and go under. At the
+Press Dive (the X button (Square), or Y on the keyboard) with deep water just ahead of you and you leap into it and go under. At the
 surface it takes you straight under. Anywhere else the key keeps its game use.
 
 Simple Diving System (Nexus 154534, optional, a separate download with its own requirements: Open Animation Replacer, and

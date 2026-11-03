@@ -357,7 +357,7 @@ namespace swim
 				return code == settings::keys[settings::kAscend][device].load(std::memory_order_relaxed) ||
 				       code == settings::keys[settings::kDescend][device].load(std::memory_order_relaxed);
 			}
-			// On land the Dive key keeps its game use unless it is about to leap, so D-pad left stays a favourites hotkey away from water.
+			// On land the Dive key keeps its game use unless it is about to leap, so the X button keeps its use away from water.
 			auto* player = diveKey ? RE::PlayerCharacter::GetSingleton() : nullptr;
 			return player && DiveWouldLeap(player);
 		}

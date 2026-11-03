@@ -26,7 +26,7 @@ namespace settings
 	// A key is the code the game's own ButtonEvent reports: a DirectInput scan code, or the gamepad code below. 0 = no key.
 	inline constexpr std::uint32_t kPadLeftTrigger = 0x0009;
 	inline constexpr std::uint32_t kPadRightTrigger = 0x000A;
-	inline constexpr std::uint32_t kPadDpadLeft = 0x0004;
+	inline constexpr std::uint32_t kPadX = 0x4000;
 
 	struct Defaults
 	{
@@ -43,7 +43,7 @@ namespace settings
 		static constexpr std::uint32_t keys[kRowCount][kDeviceCount] = {
 			{ 0x14, kPadRightTrigger },  // Ascend: T, right trigger
 			{ 0x1D, kPadLeftTrigger },   // Descend: Left Ctrl, left trigger
-			{ 0x15, kPadDpadLeft },      // Dive: Y, D-pad left
+			{ 0x15, kPadX },             // Dive: Y, X button (Square)
 		};
 	};
 
