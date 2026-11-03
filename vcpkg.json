@@ -1,0 +1,12 @@
+{
+    "name": "swimcontrols",
+    "version-string": "1.0.0",
+    "description": "Swim Controls - hold to rise and sink in water, and a dive key, on your own buttons.",
+    "homepage": "https://github.com/ApocryphaRealm/SwimControls",
+    "license": "GPL-3.0-or-later",
+    "dependencies": [
+        "commonlibsse-ng",
+        "spdlog"
+    ],
+    "builtin-baseline": "8d3649ba34aab36914ddd897958599aa0a91b08e"
+}

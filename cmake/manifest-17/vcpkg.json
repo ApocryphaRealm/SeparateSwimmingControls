@@ -1,0 +1,12 @@
+{
+  "name": "swimcontrols-17",
+  "version-string": "1.0.0",
+  "description": "Swim Controls - hold to rise and sink in water, and a dive key. [Skyrim 1.7.x build line: CommonLibSSE-NG 7.2.0, cmake/ports-17]",
+  "homepage": "https://github.com/ApocryphaRealm/SwimControls",
+  "license": "GPL-3.0-or-later",
+  "dependencies": [
+    "commonlibsse-ng",
+    "spdlog"
+  ],
+  "builtin-baseline": "127402f1c75bb3d5ff6bce04b285faa4930a5aca"
+}
