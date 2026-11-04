@@ -37,7 +37,6 @@ MIT - the notice is `include/DevBench/DevBenchAPI.LICENSE.txt`, kept with the fi
 * This mod ships no code from any other mod: the DLL is
   original code built on CommonLibSSE-NG (above).
 * devbench.dll is a separate, optional program this mod only talks to through the DevBench consumer API.
-* Starting a leap through the character controller (in-air state, then velocity) follows the approach of Apply Impulse (github.com/vinymayan/Apply-Impulse, GPL-3.0), written anew here.
 
 ## SKSE Menu Framework consumer header (include/SKSEMenuFramework.h)
 

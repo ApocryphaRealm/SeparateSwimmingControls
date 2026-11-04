@@ -214,8 +214,6 @@ namespace settings
 		swimVerticalSpeed = Defaults::swimVerticalSpeed;
 		dive = Defaults::dive;
 		diveAnimation = Defaults::diveAnimation;
-		diveForward = Defaults::diveForward;
-		diveUp = Defaults::diveUp;
 		diveSinkSpeed = Defaults::diveSinkSpeed;
 		diveSinkSeconds = Defaults::diveSinkSeconds;
 		for (int r = 0; r < kRowCount; ++r)
@@ -240,8 +238,6 @@ namespace settings
 		ReadFloat(k, "fswimverticalspeed:general", swimVerticalSpeed, 10.0f, 1000.0f);
 		ReadBool(k, "bdive:dive", dive);
 		ReadBool(k, "bdiveanimation:dive", diveAnimation);
-		ReadFloat(k, "fdiveforward:dive", diveForward, 0.0f, 1000.0f);
-		ReadFloat(k, "fdiveup:dive", diveUp, 0.0f, 800.0f);
 		ReadFloat(k, "fdivesinkspeed:dive", diveSinkSpeed, 10.0f, 1000.0f);
 		ReadFloat(k, "fdivesinkseconds:dive", diveSinkSeconds, 0.1f, 5.0f);
 		for (int r = 0; r < kRowCount; ++r)
@@ -267,8 +263,6 @@ namespace settings
 		}
 		WriteKey(lines, "Dive", "bDive", dive ? "1" : "0");
 		WriteKey(lines, "Dive", "bDiveAnimation", diveAnimation ? "1" : "0");
-		WriteKey(lines, "Dive", "fDiveForward", real(diveForward));
-		WriteKey(lines, "Dive", "fDiveUp", real(diveUp));
 		WriteKey(lines, "Dive", "fDiveSinkSpeed", real(diveSinkSpeed));
 		WriteKey(lines, "Dive", "fDiveSinkSeconds", real(diveSinkSeconds));
 		std::ofstream file(g_iniPath, std::ios::trunc);

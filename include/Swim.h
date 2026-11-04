@@ -11,14 +11,15 @@
 // [Horseback] layouts swap it): "a key a row holds does nothing else in water" is the game's own input handlers being told
 // not to take that press, by a wrap of each handler's CanProcess, which is what also keeps Sneak from sneaking.
 //
-// DIVE. On land, with deep water ahead, a leap forward through the character controller (the same InAir + velocity path other
-// mods use), and on reaching the water a push down. In water at the surface, just the push down. The pose in the air comes
-// from Simple Diving System (Nexus 154534) when it is installed: it replaces the falling animation while its behaviour graph
-// variable bSimpleDiving_IsDiving is 1. A soft dependency, asked for at run time; without it the leap plays the game's own fall.
+// DIVE. Only in water; on land the key is the game's. A push down, and in third person the body turn of Simple Diving System
+// (Nexus 154534) when it is installed. That mod has no swimming clip: its clips replace the falling animation (MT_JumpFall)
+// through Open Animation Replacer while its behaviour graph variable bSimpleDiving_IsDiving is 1. So for as long as the push
+// lasts the graph is sent to its fall state (JumpFall), the variable is held at 1, and SwimStart brings it back. A soft
+// dependency, asked for at run time; without it the push works and nothing else plays.
 namespace swim
 {
 	void InstallHandlerWraps();    // plugin load: the handlers' vtables
-	void InstallMovementWrap();    // first load or new game, once: after every plugin's data-loaded hooks, so it adds to what they did
+	void InstallMovementWrap();    // first load or new game, once: after every plugin's data-loaded hooks, so it adds to what they did; also the camera wrap
 	void RegisterInputSink();      // kInputLoaded
 
 	struct SoftDependency

@@ -36,8 +36,6 @@ namespace settings
 		static constexpr float swimVerticalSpeed = 150.0f;
 		static constexpr bool dive = true;
 		static constexpr bool diveAnimation = true;
-		static constexpr float diveForward = 350.0f;
-		static constexpr float diveUp = 220.0f;
 		static constexpr float diveSinkSpeed = 300.0f;
 		static constexpr float diveSinkSeconds = 0.8f;
 		static constexpr std::uint32_t keys[kRowCount][kDeviceCount] = {
@@ -52,9 +50,7 @@ namespace settings
 	inline std::atomic<bool> swimVertical{ Defaults::swimVertical };           // bSwimVertical:General - Ascend, Descend; Sneak does not sneak in water
 	inline std::atomic<float> swimVerticalSpeed{ Defaults::swimVerticalSpeed };// fSwimVerticalSpeed:General - game units a second, 10 to 1000
 	inline std::atomic<bool> dive{ Defaults::dive };                           // bDive:Dive - the Dive key
-	inline std::atomic<bool> diveAnimation{ Defaults::diveAnimation };         // bDiveAnimation:Dive - ask Simple Diving System for its pose, when it is there
-	inline std::atomic<float> diveForward{ Defaults::diveForward };            // fDiveForward:Dive - leap speed, game units a second, 0 to 1000
-	inline std::atomic<float> diveUp{ Defaults::diveUp };                      // fDiveUp:Dive - leap lift, game units a second, 0 to 800
+	inline std::atomic<bool> diveAnimation{ Defaults::diveAnimation };         // bDiveAnimation:Dive - play Simple Diving System's body turn, when it is there
 	inline std::atomic<float> diveSinkSpeed{ Defaults::diveSinkSpeed };        // fDiveSinkSpeed:Dive - how fast a dive takes you under, 10 to 1000
 	inline std::atomic<float> diveSinkSeconds{ Defaults::diveSinkSeconds };    // fDiveSinkSeconds:Dive - for how long, 0.1 to 5.0
 	inline std::atomic<std::uint32_t> keys[kRowCount][kDeviceCount]{};         // [Keys] iAscendKey, iAscendPad ...

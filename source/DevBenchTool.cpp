@@ -12,7 +12,7 @@
 #include <string_view>
 
 // DevBench tool "ssc.control" (rules 31 and 64). A real test still presses the real button; hold and dive prove the
-// movement path and the leap, not the input path.
+// movement path and the pose, not the input path.
 namespace DevBenchTool
 {
 	namespace
@@ -56,8 +56,6 @@ namespace DevBenchTool
 				else if (a_name == "fSwimVerticalSpeed") { settings::swimVerticalSpeed = std::stof(a_value); }
 				else if (a_name == "bDive") { settings::dive = a_value == "1"; }
 				else if (a_name == "bDiveAnimation") { settings::diveAnimation = a_value == "1"; }
-				else if (a_name == "fDiveForward") { settings::diveForward = std::stof(a_value); }
-				else if (a_name == "fDiveUp") { settings::diveUp = std::stof(a_value); }
 				else if (a_name == "fDiveSinkSpeed") { settings::diveSinkSpeed = std::stof(a_value); }
 				else if (a_name == "fDiveSinkSeconds") { settings::diveSinkSeconds = std::stof(a_value); }
 				else { return false; }

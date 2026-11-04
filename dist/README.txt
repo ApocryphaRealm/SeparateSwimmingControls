@@ -11,12 +11,12 @@ the water: at the surface it does the game's own jump, and deeper down it does n
 While you are in water, a button these rows hold does nothing else; on land it goes back to what it was.
 
 DIVE
-Press Dive (the X button (Square), or Y on the keyboard) with deep water just ahead of you and you leap into it and go under. At the
-surface it takes you straight under. Anywhere else the key keeps its game use.
+Press Dive (the X button (Square), or Y on the keyboard) in water and it takes you under. On land this mod leaves the key
+alone, so it keeps its game use.
 
 Simple Diving System (Nexus 154534, optional, a separate download with its own requirements: Open Animation Replacer, and
-Behavior Data Injector with Universal Plugin, or Nemesis or Pandora) gives the leap its dive pose in third person. Without
-it the dive works and plays the game's own fall.
+Behavior Data Injector with Universal Plugin, or Nemesis or Pandora) turns your body with its diving animation while the push
+lasts, in third person. Without it the push works the same.
 
 SETTINGS
 Separate Swimming Controls in the Apocrypha Menu Framework: every key, both speeds, the dive. All of it is also in
