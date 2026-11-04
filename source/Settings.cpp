@@ -34,7 +34,6 @@ namespace settings
 		constexpr const char* kKeyNames[kRowCount][kDeviceCount] = {
 			{ "iAscendKey", "iAscendPad" },
 			{ "iDescendKey", "iDescendPad" },
-			{ "iDiveKey", "iDivePad" },
 		};
 
 		std::vector<std::string> ReadLines(const std::string& a_path)
@@ -146,7 +145,6 @@ namespace settings
 		{
 		case kAscend: return "Ascend";
 		case kDescend: return "Descend";
-		case kDive: return "Dive";
 		default: return "?";
 		}
 	}
@@ -212,10 +210,7 @@ namespace settings
 		enabled = Defaults::enabled;
 		swimVertical = Defaults::swimVertical;
 		swimVerticalSpeed = Defaults::swimVerticalSpeed;
-		dive = Defaults::dive;
 		diveAnimation = Defaults::diveAnimation;
-		diveSinkSpeed = Defaults::diveSinkSpeed;
-		diveSinkSeconds = Defaults::diveSinkSeconds;
 		for (int r = 0; r < kRowCount; ++r)
 		{
 			for (int d = 0; d < kDeviceCount; ++d) { keys[r][d] = Defaults::keys[r][d]; }
@@ -231,15 +226,12 @@ namespace settings
 			logger::warn("{} is not there; the compiled defaults are in force", g_iniPath);
 			return;
 		}
-		const auto k = ReadKeys(g_iniPath);
+		const auto k = ReadKeys(g_iniPath);  // only the keys asked for below are read: a line from an older version (iDiveKey, bDive) is ignored and left as it is
 		ReadUInt(k, "uloglevel:debug", logLevel);
 		ReadBool(k, "benabled:general", enabled);
 		ReadBool(k, "bswimvertical:general", swimVertical);
 		ReadFloat(k, "fswimverticalspeed:general", swimVerticalSpeed, 10.0f, 1000.0f);
-		ReadBool(k, "bdive:dive", dive);
 		ReadBool(k, "bdiveanimation:dive", diveAnimation);
-		ReadFloat(k, "fdivesinkspeed:dive", diveSinkSpeed, 10.0f, 1000.0f);
-		ReadFloat(k, "fdivesinkseconds:dive", diveSinkSeconds, 0.1f, 5.0f);
 		for (int r = 0; r < kRowCount; ++r)
 		{
 			for (int d = 0; d < kDeviceCount; ++d) { ReadUInt(k, Lower(kKeyNames[r][d]) + ":keys", keys[r][d]); }
@@ -261,10 +253,7 @@ namespace settings
 			WriteKey(lines, "Keys", kKeyNames[r][kKeyboard], std::format("0x{:02X}", keys[r][kKeyboard].load()));
 			WriteKey(lines, "Keys", kKeyNames[r][kGamepad], std::format("0x{:04X}", keys[r][kGamepad].load()));
 		}
-		WriteKey(lines, "Dive", "bDive", dive ? "1" : "0");
 		WriteKey(lines, "Dive", "bDiveAnimation", diveAnimation ? "1" : "0");
-		WriteKey(lines, "Dive", "fDiveSinkSpeed", real(diveSinkSpeed));
-		WriteKey(lines, "Dive", "fDiveSinkSeconds", real(diveSinkSeconds));
 		std::ofstream file(g_iniPath, std::ios::trunc);
 		if (!file)
 		{

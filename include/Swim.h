@@ -11,11 +11,11 @@
 // [Horseback] layouts swap it): "a key a row holds does nothing else in water" is the game's own input handlers being told
 // not to take that press, by a wrap of each handler's CanProcess, which is what also keeps Sneak from sneaking.
 //
-// DIVE. Only in water; on land the key is the game's. A push down, and in third person the body turn of Simple Diving System
-// (Nexus 154534) when it is installed. That mod has no swimming clip: its clips replace the falling animation (MT_JumpFall)
-// through Open Animation Replacer while its behaviour graph variable bSimpleDiving_IsDiving is 1. So for as long as the push
-// lasts the graph is sent to its fall state (JumpFall), the variable is held at 1, and SwimStart brings it back. A soft
-// dependency, asked for at run time; without it the push works and nothing else plays.
+// DIVE POSE. Descending in water, in third person, plays the body turn of Simple Diving System (Nexus 154534) when it is
+// installed. That mod has no swimming clip: its clips replace the falling animation (MT_JumpFall) through Open Animation
+// Replacer while its behaviour graph variable bSimpleDiving_IsDiving is 1. So once per press, for as long as Descend is held,
+// the graph is sent to its fall state (JumpFall), the variable is held at 1, and SwimStart brings it back. A soft dependency,
+// asked for at run time; without it Descend works and nothing else plays.
 namespace swim
 {
 	void InstallHandlerWraps();    // plugin load: the handlers' vtables
@@ -35,5 +35,4 @@ namespace swim
 	// DevBench (rule 31 and 64)
 	std::string StateJson();
 	void DriveHold(int a_row, int a_ms);   // as if the row's key were held for a_ms; the movement path, not the input path
-	void DriveDive();                      // what the Dive key queues
 }

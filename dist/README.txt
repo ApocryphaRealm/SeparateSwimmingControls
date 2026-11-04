@@ -1,7 +1,7 @@
 Separate Swimming Controls
 Version 1.0.0
 
-Skyrim has no button for rising or sinking in water. This mod adds two, and a dive.
+Skyrim has no button for rising or sinking in water. This mod adds two.
 
 ASCEND AND DESCEND
 Hold Ascend (right trigger, or T on the keyboard) to rise and Descend (left trigger, or Left Ctrl) to sink, at any camera angle.
@@ -10,16 +10,13 @@ sneaking, and if you walk into water sneaking, that ends as you start to swim. J
 the water: at the surface it does the game's own jump, and deeper down it does nothing, as in the unmodded game.
 While you are in water, a button these rows hold does nothing else; on land it goes back to what it was.
 
-DIVE
-Press Dive (the X button (Square), or Y on the keyboard) in water and it takes you under. On land this mod leaves the key
-alone, so it keeps its game use.
-
+DIVE ANIMATION
 Simple Diving System (Nexus 154534, optional, a separate download with its own requirements: Open Animation Replacer, and
-Behavior Data Injector with Universal Plugin, or Nemesis or Pandora) turns your body with its diving animation while the push
-lasts, in third person. Without it the push works the same.
+Behavior Data Injector with Universal Plugin, or Nemesis or Pandora) plays its diving animation while you hold Descend in
+water, in third person. Without it Descend works the same.
 
 SETTINGS
-Separate Swimming Controls in the Apocrypha Menu Framework: every key, both speeds, the dive. All of it is also in
+Separate Swimming Controls in the Apocrypha Menu Framework: every key, the speed, the dive animation. All of it is also in
 SKSE\Plugins\SeparateSwimmingControls.ini, so the mod works the same without a menu framework.
 
 WORKS BESIDE

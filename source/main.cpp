@@ -1,5 +1,5 @@
 // Separate Swimming Controls - own code, GPL-3.0-or-later. Hold-to-rise and hold-to-sink in water, Sneak that does not sneak
-// in water, and a dive key that calls on Simple Diving System's animation when that mod is installed. See include/Swim.h.
+// in water, and sinking that calls on Simple Diving System's animation when that mod is installed. See include/Swim.h.
 #include "PCH.h"
 
 #include "DevBenchTool.h"

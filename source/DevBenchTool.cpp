@@ -11,7 +11,7 @@
 #include <string>
 #include <string_view>
 
-// DevBench tool "ssc.control" (rules 31 and 64). A real test still presses the real button; hold and dive prove the
+// DevBench tool "ssc.control" (rules 31 and 64). A real test still presses the real button; hold proves the
 // movement path and the pose, not the input path.
 namespace DevBenchTool
 {
@@ -54,10 +54,7 @@ namespace DevBenchTool
 				if (a_name == "bEnabled") { settings::enabled = a_value == "1"; }
 				else if (a_name == "bSwimVertical") { settings::swimVertical = a_value == "1"; }
 				else if (a_name == "fSwimVerticalSpeed") { settings::swimVerticalSpeed = std::stof(a_value); }
-				else if (a_name == "bDive") { settings::dive = a_value == "1"; }
 				else if (a_name == "bDiveAnimation") { settings::diveAnimation = a_value == "1"; }
-				else if (a_name == "fDiveSinkSpeed") { settings::diveSinkSpeed = std::stof(a_value); }
-				else if (a_name == "fDiveSinkSeconds") { settings::diveSinkSeconds = std::stof(a_value); }
 				else { return false; }
 			}
 			catch (...)
@@ -75,14 +72,13 @@ namespace DevBenchTool
 			if (op == "hold")
 			{
 				const int row = RowIndex(Get(args, "row"));
-				if (row < 0) { extra = "false,\"error\":\"row is Ascend, Descend or Dive\""; }
+				if (row < 0) { extra = "false,\"error\":\"row is Ascend or Descend\""; }
 				else
 				{
 					const std::string ms = Get(args, "ms");
 					swim::DriveHold(row, ms.empty() ? 1000 : std::atoi(ms.c_str()));
 				}
 			}
-			else if (op == "dive") { swim::DriveDive(); }
 			else if (op == "set")
 			{
 				if (!SetByName(Get(args, "name"), Get(args, "value"))) { extra = "false,\"error\":\"unknown name or bad value\""; }
@@ -111,8 +107,8 @@ namespace DevBenchTool
 		}
 		constexpr const char* descriptor =
 			"{"
-			"\"description\":\"Separate Swimming Controls live state and driver. op=state (default): settings, swimming state, keys and whether each is held, counters, dive state and what Simple Diving System has answered. "
-			"op=hold row=Ascend|Descend ms=N: as if the row's key were held. op=dive: what the Dive key queues. op=set name=<INI key> value=<v>: sets and saves. op=restore: defaults, saved. op=reload: re-reads the INI.\","
+			"\"description\":\"Separate Swimming Controls live state and driver. op=state (default): settings, swimming state, keys and whether each is held, counters, the dive pose's state and what Simple Diving System has answered. "
+			"op=hold row=Ascend|Descend ms=N: as if the row's key were held; Descend starts the dive pose as the key does. op=set name=<INI key> value=<v>: sets and saves. op=restore: defaults, saved. op=reload: re-reads the INI.\","
 			"\"inputSchema\":{\"type\":\"object\",\"properties\":{\"op\":{\"type\":\"string\"},\"row\":{\"type\":\"string\"},\"ms\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}},"
 			"\"readOnly\":false"
 			"}";

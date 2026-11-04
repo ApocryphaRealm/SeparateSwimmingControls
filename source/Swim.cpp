@@ -16,7 +16,7 @@ namespace swim
 	namespace
 	{
 		constexpr std::int64_t kHeldForgetMs = 300;  // a held button repeats every frame; silence means its release was lost
-		constexpr std::int64_t kDiveCooldownMs = 800;
+		constexpr std::int64_t kPoseCooldownMs = 800;  // between pose starts, so tapping Descend or a flickering swim flag cannot loop it
 		constexpr float kPoseFallHeight = 600.0f;      // over 500: Simple Diving System's High Height and Forward conditions, its two head-down clips
 		constexpr const char* kDivingVar = "bSimpleDiving_IsDiving";
 
@@ -29,8 +29,8 @@ namespace swim
 		std::atomic<std::int64_t> g_driveUntil[settings::kRowCount]{};
 
 		std::atomic<bool> g_inWater{ false };          // the player's swimming flag at the last movement frame
-		std::atomic<std::int64_t> g_sinkUntil{ 0 };
-		std::atomic<std::int64_t> g_lastDive{ 0 };
+		std::atomic<std::int64_t> g_lastPose{ 0 };
+		std::atomic<bool> g_poseTried{ false };        // this press of Descend has queued its pose: once a press, never every frame
 		std::atomic<bool> g_posing{ false };           // the dive's body turn is playing
 		std::atomic<bool> g_poseRefusalLogged{ false };
 		std::atomic<bool> g_fallSawVar{ false };       // Simple Diving System's variable went to 1 during this fall
@@ -44,10 +44,10 @@ namespace swim
 		std::atomic<int> g_stoppedAtFloor{ 0 };
 		std::atomic<int> g_sneakClears{ 0 };
 		std::atomic<int> g_blockedPresses{ 0 };
-		std::atomic<int> g_waterDives{ 0 };
-		std::atomic<int> g_diveRefused{ 0 };
+		std::atomic<int> g_poseStarts{ 0 };
+		std::atomic<int> g_poseRefused{ 0 };
 		std::atomic<int> g_varWrites{ 0 };
-		std::string g_lastDiveResult = "none";  // main thread
+		std::string g_lastPoseResult = "none";  // main thread
 
 		int DeviceOf(const RE::ButtonEvent* a_button)
 		{
@@ -115,7 +115,7 @@ namespace swim
 			}
 		}
 
-		// Main thread, from a task or the Dive key. SwimStart is what the game itself sends on entering water.
+		// Main thread, from a task. SwimStart is what the game itself sends on entering water.
 		void EndPose(bool a_stillSwimming)
 		{
 			auto* player = RE::PlayerCharacter::GetSingleton();
@@ -141,7 +141,7 @@ namespace swim
 			{
 				if (!g_poseRefusalLogged.exchange(true))
 				{
-					logger::info("dive animation: no pose, the push still works: SimpleDiving.dll {}, OpenAnimationReplacer.dll {}, graph variable {}",
+					logger::info("dive animation: no pose, Descend still works: SimpleDiving.dll {}, OpenAnimationReplacer.dll {}, graph variable {}",
 								 d.dll ? "loaded" : "not loaded", d.oar ? "loaded" : "not loaded", d.graphVar ? "present" : "absent");
 				}
 				return;
@@ -167,37 +167,36 @@ namespace swim
 			logger::info("dive: pose started, JumpFall taken, graph variable present");
 		}
 
-		void DoDive()
+		// Queued once per press of Descend from the movement frame, which has already seen the player swimming.
+		void TryPose()
 		{
 			auto* player = RE::PlayerCharacter::GetSingleton();
 			auto* state = player ? player->AsActorState() : nullptr;
 			const auto refuse = [](const char* a_why) {
-				g_lastDiveResult = a_why;
-				g_diveRefused.fetch_add(1);
+				g_lastPoseResult = a_why;
+				g_poseRefused.fetch_add(1);
 				logger::debug("dive: {}", a_why);
 			};
 			if (!state) { return refuse("no player"); }
-			if (!settings::enabled || !settings::dive) { return refuse("switched off"); }
+			if (!settings::enabled || !settings::swimVertical) { return refuse("switched off"); }
 			if (!GameplayHasInput()) { return refuse("the game is not taking input"); }
 			if (player->IsOnMount()) { return refuse("mounted"); }
 			if (!state->IsSwimming()) { return refuse("not in water"); }
-			const auto now = NowMs();
-			if (now - g_lastDive.load() < kDiveCooldownMs) { return refuse("cooldown"); }
 
-			g_lastDive = now;
-			g_sinkUntil = now + static_cast<std::int64_t>(settings::diveSinkSeconds * 1000.0f);
-			g_waterDives.fetch_add(1);
-			g_lastDiveResult = "under, from the surface";
-			logger::info("dive: under, from the surface");
 			StartPose(player);
+			if (g_posing.load()) { g_poseStarts.fetch_add(1); }
+			g_lastPoseResult = g_posing.load() ? "playing" : "no pose";
 		}
 
-		// Ends the pose as soon as its reason is gone: the push is over, or the player left the water or the third-person
-		// camera. A task, because the graph is not asked for changes in the middle of movement.
-		void EndPoseIfDone(bool a_swimming, std::int64_t a_now)
+		// Ends the pose as soon as its reason is gone: Descend is released or cancelled by Ascend, the bottom is reached, or the
+		// player left the water or the third-person camera. A task, because the graph is not asked for changes in the middle of
+		// movement.
+		void EndPoseIfDone(RE::PlayerCharacter* a_player, bool a_swimming, std::int64_t a_now)
 		{
 			const auto* camera = RE::PlayerCamera::GetSingleton();
-			const bool over = !a_swimming || a_now >= g_sinkUntil.load(std::memory_order_relaxed) || !settings::enabled.load(std::memory_order_relaxed) ||
+			auto* controller = a_player->GetCharController();
+			const bool descending = Held(settings::kDescend, a_now) && !Held(settings::kAscend, a_now) && controller && !controller->flags.any(RE::CHARACTER_FLAGS::kSupport);
+			const bool over = !a_swimming || !descending || !settings::enabled.load(std::memory_order_relaxed) || !settings::swimVertical.load(std::memory_order_relaxed) ||
 			                  !settings::diveAnimation.load(std::memory_order_relaxed) || (camera && camera->IsInFirstPerson());
 			if (!over) { return; }
 			g_posing = false;
@@ -235,11 +234,12 @@ namespace swim
 			const auto* state = a_player->AsActorState();
 			if (!state) { return; }
 			const bool swimming = state->IsSwimming() && !a_player->IsOnMount();
-			if (g_posing.load(std::memory_order_relaxed)) { EndPoseIfDone(swimming, NowMs()); }
+			if (a_delta > 0.0f && g_posing.load(std::memory_order_relaxed)) { EndPoseIfDone(a_player, swimming, NowMs()); }
 			if (a_delta <= 0.0f || !settings::enabled.load(std::memory_order_relaxed)) { return; }
 			if (swimming != g_inWater.load(std::memory_order_relaxed))
 			{
 				g_inWater = swimming;
+				g_poseTried = false;
 				logger::debug("swimming: {}", swimming);
 				if (swimming && Loaded(L"SimpleDiving.dll"))
 				{
@@ -265,13 +265,19 @@ namespace swim
 			auto* controller = a_player->GetCharController();
 			if (!controller) { return; }
 			const bool onFloor = controller->flags.any(RE::CHARACTER_FLAGS::kSupport);
-			if (now < g_sinkUntil.load(std::memory_order_relaxed) && !onFloor)
-			{
-				a_translation.z -= settings::diveSinkSpeed.load(std::memory_order_relaxed) * a_delta;
-			}
 			if (!settings::swimVertical.load(std::memory_order_relaxed)) { return; }
 			const bool up = Held(settings::kAscend, now);
 			const bool down = Held(settings::kDescend, now);
+			// The dive pose: once when Descend starts, not again until it is released, however long it is held. A press on the
+			// bottom waits for the player to come off it. A task, like the rest of the graph's changes.
+			if (!down || up) { g_poseTried = false; }
+			else if (!onFloor && !g_poseTried.load(std::memory_order_relaxed) && settings::diveAnimation.load(std::memory_order_relaxed) &&
+			         now - g_lastPose.load(std::memory_order_relaxed) >= kPoseCooldownMs)
+			{
+				g_poseTried = true;
+				g_lastPose = now;
+				if (auto* tasks = SKSE::GetTaskInterface()) { tasks->AddTask([]() { TryPose(); }); }
+			}
 			if (up == down) { return; }  // neither, or both, which cancel
 			if (up && !controller->flags.any(RE::CHARACTER_FLAGS::kShouldersUnderWater))
 			{
@@ -332,7 +338,6 @@ namespace swim
 			const auto code = button->GetIDCode();
 			if (code == 0) { return false; }
 			if (!g_inWater.load(std::memory_order_relaxed)) { return false; }  // on land every key keeps its game use
-			if (settings::dive.load(std::memory_order_relaxed) && code == settings::keys[settings::kDive][device].load(std::memory_order_relaxed)) { return true; }
 			if (!settings::swimVertical.load(std::memory_order_relaxed)) { return false; }
 			return code == settings::keys[settings::kAscend][device].load(std::memory_order_relaxed) ||
 			       code == settings::keys[settings::kDescend][device].load(std::memory_order_relaxed);
@@ -382,10 +387,6 @@ namespace swim
 					{
 						if (code != settings::keys[row][device].load(std::memory_order_relaxed)) { continue; }
 						g_seen[row][device].store(button->IsUp() ? 0 : now, std::memory_order_relaxed);
-						if (row == settings::kDive && button->IsDown() && g_inWater.load(std::memory_order_relaxed) && settings::enabled && settings::dive && GameplayHasInput())
-						{
-							if (auto* tasks = SKSE::GetTaskInterface()) { tasks->AddTask([]() { DoDive(); }); }
-						}
 					}
 				}
 				return RE::BSEventNotifyControl::kContinue;
@@ -454,8 +455,11 @@ namespace swim
 	{
 		InstallMovementWrap();
 		g_posing = false;
+		g_poseTried = false;
 		g_poseRefusalLogged = false;
-		g_sinkUntil = 0;
+		// The last game's answer does not carry over: a reload from the water would read as climbing out, for the frame the
+		// movement hook needs to correct it, and that frame would clear the sneak of a save made sneaking.
+		g_inWater = false;
 		// Only the DLLs here: the player's behaviour graph is not loaded yet at this message (it read as absent on a list that has
 		// the variable compiled in), so the graph is asked at the first dive.
 		const auto d = DiveAnimationStatus();
@@ -481,24 +485,19 @@ namespace swim
 		return std::format(
 			R"("enabled":{},"swimVertical":{},"speed":{},"isSwimming":{},"inWaterSeen":{},"sneaking":{},"mounted":{},"shouldersUnder":{},"support":{},"keys":{{{}}},)"
 			R"("frames":{},"lastStep":{},"stoppedAtSurface":{},"stoppedAtFloor":{},"sneakClears":{},"blockedPresses":{},)"
-			R"("dive":{{"on":{},"fromSurface":{},"refused":{},"posing":{},"sinking":{},"lastResult":"{}","varWrites":{},"sds":{{"dll":{},"oar":{},"graphVar":{},"value":{}}}}})",
+			R"("dive":{{"on":{},"started":{},"refused":{},"posing":{},"lastResult":"{}","varWrites":{},"sds":{{"dll":{},"oar":{},"graphVar":{},"value":{}}}}})",
 			settings::enabled.load() ? "true" : "false", settings::swimVertical.load() ? "true" : "false", settings::swimVerticalSpeed.load(),
 			state && state->IsSwimming() ? "true" : "false", g_inWater.load() ? "true" : "false", state && state->IsSneaking() ? "true" : "false",
 			player && player->IsOnMount() ? "true" : "false",
 			controller && controller->flags.any(RE::CHARACTER_FLAGS::kShouldersUnderWater) ? "true" : "false",
 			controller && controller->flags.any(RE::CHARACTER_FLAGS::kSupport) ? "true" : "false", keys,
 			g_verticalFrames.load(), g_lastStep.load(), g_stoppedAtSurface.load(), g_stoppedAtFloor.load(), g_sneakClears.load(), g_blockedPresses.load(),
-			settings::dive.load() ? "true" : "false", g_waterDives.load(), g_diveRefused.load(), g_posing.load() ? "true" : "false",
-			now < g_sinkUntil.load() ? "true" : "false", g_lastDiveResult, g_varWrites.load(), d.dll ? "true" : "false", d.oar ? "true" : "false", d.graphVar ? "true" : "false", var);
+			settings::diveAnimation.load() ? "true" : "false", g_poseStarts.load(), g_poseRefused.load(), g_posing.load() ? "true" : "false",
+			g_lastPoseResult, g_varWrites.load(), d.dll ? "true" : "false", d.oar ? "true" : "false", d.graphVar ? "true" : "false", var);
 	}
 
 	void DriveHold(int a_row, int a_ms)
 	{
 		if (a_row >= 0 && a_row < settings::kRowCount) { g_driveUntil[a_row] = NowMs() + a_ms; }
-	}
-
-	void DriveDive()
-	{
-		if (auto* tasks = SKSE::GetTaskInterface()) { tasks->AddTask([]() { DoDive(); }); }
 	}
 }

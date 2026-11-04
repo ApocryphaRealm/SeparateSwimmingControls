@@ -67,8 +67,7 @@ namespace page
 			switch (a_row)
 			{
 			case settings::kAscend: return TR("SWIM_RowAscend", "Ascend");
-			case settings::kDescend: return TR("SWIM_RowDescend", "Descend");
-			default: return TR("SWIM_RowDive", "Dive");
+			default: return TR("SWIM_RowDescend", "Descend");
 			}
 		}
 
@@ -220,18 +219,12 @@ namespace page
 			}
 
 			SeparatorText(TR("SWIM_SecDive", "Dive").c_str());
-			changed |= ToggleRow(TR("SWIM_Dive", "Dive key"), settings::dive,
-				TR("SWIM_HelpDive", "In water, the key pushes you under. On land this mod leaves the key alone, so it keeps its game use."));
 			changed |= ToggleRow(TR("SWIM_DiveAnim", "Use Simple Diving System's dive pose"), settings::diveAnimation,
-				TR("SWIM_HelpDiveAnim", "A separate mod. When it is installed, its diving animation turns your body while the push lasts, in third person."));
+				TR("SWIM_HelpDiveAnim", "A separate mod. When it is installed, its diving animation plays while you hold Descend in water, in third person."));
 			const auto sds = swim::DiveAnimationStatus();
 			TextDisabled("%s", (sds.Ready() ? TR("SWIM_SdsReady", "Simple Diving System: ready.") :
 			                    sds.dll     ? TR("SWIM_SdsPartial", "Simple Diving System: installed, but Open Animation Replacer or its behaviour patch is missing, or no game is loaded yet.") :
-			                                  TR("SWIM_SdsAbsent", "Simple Diving System: not installed. The dive still works.")).c_str());
-			PushItemWidth(260.0f);
-			changed |= SliderRow(TR("SWIM_DiveSink", "Push under: speed"), settings::diveSinkSpeed, 10.0f, 1000.0f, "%.0f", TR("SWIM_HelpDiveSink", "How fast the push takes you under."));
-			changed |= SliderRow(TR("SWIM_DiveSinkTime", "Push under: seconds"), settings::diveSinkSeconds, 0.1f, 5.0f, "%.1f", TR("SWIM_HelpDiveSinkTime", "How long the push lasts."));
-			PopItemWidth();
+			                                  TR("SWIM_SdsAbsent", "Simple Diving System: not installed. Descend still works.")).c_str());
 
 			Spacing();
 			if (Button(TR("SWIM_Restore", "Restore defaults").c_str()))
